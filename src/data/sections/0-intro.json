@@ -1,0 +1,33 @@
+{
+    "id": "intro",
+    "title": "Introduction",
+    "content": [
+        {
+            "type": "paragraph",
+            "text": "Laravel 12 est un framework PHP moderne qui simplifie le développement backend. Deux concepts essentiels sont :"
+        },
+        {
+            "type": "list",
+            "ordered": true,
+            "items": [
+                "<strong>Routage (Routing)</strong> : permet au serveur de savoir quelle action effectuer selon l'URL et la méthode HTTP.",
+                "<strong>Middleware</strong> : permet de contrôler l'accès et de filtrer les requêtes avant qu'elles arrivent au controller."
+            ]
+        },
+        {
+            "type": "subheader",
+            "text": "Pourquoi c'est important ?"
+        },
+        {
+            "type": "list",
+            "items": [
+                "Le routage organise votre application",
+                "Les middleware sécurisent et régulent l'accès",
+                "Ensemble, ils rendent votre code propre, maintenable et sécurisé"
+            ]
+        },
+        {
+            "type": "separator"
+        }
+    ]
+}

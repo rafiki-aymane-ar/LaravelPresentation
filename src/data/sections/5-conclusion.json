@@ -1,0 +1,18 @@
+{
+    "id": "conclusion",
+    "title": "Conclusion",
+    "content": [
+        {
+            "type": "list",
+            "items": [
+                "<strong>Route</strong> = chemin / direction",
+                "<strong>Middleware</strong> = contrôle / sécurité",
+                "<strong>Controller</strong> = logique métier"
+            ]
+        },
+        {
+            "type": "paragraph",
+            "text": "Laravel 12 organise votre application pour qu'elle soit sécurisée, maintenable et claire."
+        }
+    ]
+}

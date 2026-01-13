@@ -1,0 +1,318 @@
+{
+    "id": "partie-1",
+    "title": "Partie 1 — Le routage dans Laravel 12",
+    "content": [
+        {
+            "type": "subheader",
+            "text": "1. Définition"
+        },
+        {
+            "type": "paragraph",
+            "text": "Une route est une règle qui dit à Laravel :"
+        },
+        {
+            "type": "quote",
+            "text": "\"Si quelqu'un visite cette URL avec cette méthode HTTP, exécute cette action.\""
+        },
+        {
+            "type": "subsubheader",
+            "text": "Exemple simple"
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "Route::get('/hello', function () {\n    return 'Bonjour';\n});"
+        },
+        {
+            "type": "list",
+            "items": [
+                "<code>/hello</code> → URL",
+                "<code>get</code> → méthode HTTP",
+                "<code>function</code> → action à exécuter"
+            ]
+        },
+        {
+            "type": "subheader",
+            "text": "2. Où écrire les routes ?"
+        },
+        {
+            "type": "paragraph",
+            "text": "Dans le dossier <code>routes/</code> :"
+        },
+        {
+            "type": "table",
+            "headers": [
+                "Fichier",
+                "Usage"
+            ],
+            "rows": [
+                [
+                    "web.php",
+                    "Pages Web (HTML)"
+                ],
+                [
+                    "api.php",
+                    "API (JSON)"
+                ],
+                [
+                    "console.php",
+                    "Commandes artisan"
+                ],
+                [
+                    "channels.php",
+                    "Broadcasting / notifications"
+                ]
+            ]
+        },
+        {
+            "type": "subheader",
+            "text": "3. Les méthodes HTTP (TOUTES)"
+        },
+        {
+            "type": "paragraph",
+            "text": "Chaque méthode exprime une intention différente :"
+        },
+        {
+            "type": "table",
+            "headers": [
+                "Méthode",
+                "Action",
+                "Exemple"
+            ],
+            "className": "method-table",
+            "rows": [
+                [
+                    {
+                        "content": "GET",
+                        "isBadge": true
+                    },
+                    "Lire / Afficher",
+                    "Page produits"
+                ],
+                [
+                    {
+                        "content": "POST",
+                        "isBadge": true
+                    },
+                    "Créer / Envoyer",
+                    "Formulaire inscription"
+                ],
+                [
+                    {
+                        "content": "PUT",
+                        "isBadge": true
+                    },
+                    "Modifier complètement",
+                    "Modifier profil"
+                ],
+                [
+                    {
+                        "content": "PATCH",
+                        "isBadge": true
+                    },
+                    "Modifier partiellement",
+                    "Changer mot de passe"
+                ],
+                [
+                    {
+                        "content": "DELETE",
+                        "isBadge": true
+                    },
+                    "Supprimer",
+                    "Supprimer compte"
+                ],
+                [
+                    {
+                        "content": "OPTIONS",
+                        "isBadge": true
+                    },
+                    "Vérifier autorisations",
+                    "Préflight CORS API"
+                ],
+                [
+                    {
+                        "content": "HEAD",
+                        "isBadge": true
+                    },
+                    "Vérifier l'existence",
+                    "Vérifier fichier"
+                ],
+                [
+                    {
+                        "content": "ANY",
+                        "isBadge": true
+                    },
+                    "Toutes",
+                    "Webhook universel"
+                ],
+                [
+                    {
+                        "content": "MATCH",
+                        "isBadge": true
+                    },
+                    "Sélective",
+                    "GET + POST sur login"
+                ]
+            ]
+        },
+        {
+            "type": "subheader",
+            "text": "4. Routes simples"
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "Route::get('/home', function () {\n    return view('home');\n});"
+        },
+        {
+            "type": "list",
+            "items": [
+                "Affiche la page <code>/home</code>",
+                "Utilisée pour des pages simples ou tests"
+            ]
+        },
+        {
+            "type": "subheader",
+            "text": "5. Routes dynamiques"
+        },
+        {
+            "type": "subsubheader",
+            "text": "Paramètres obligatoires"
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "Route::get('/users/{id}', function ($id) {\n    return \"Utilisateur $id\";\n});"
+        },
+        {
+            "type": "subsubheader",
+            "text": "Paramètres optionnels"
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "Route::get('/users/{name?}', function ($name = null) {\n    return \"Utilisateur $name\";\n});"
+        },
+        {
+            "type": "subsubheader",
+            "text": "Contraintes"
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "Route::get('/users/{id}', ...)->where('id', '[0-9]+');"
+        },
+        {
+            "type": "subsubheader",
+            "text": "Paramètres et Injection de Dépendances"
+        },
+        {
+            "type": "paragraph",
+            "text": "Vous pouvez combiner des paramètres de route avec l'injection de dépendances (ex: Request)."
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "use Illuminate\\Http\\Request;\n\nRoute::get('/user/{id}', function (Request $request, string $id) {\n    return 'User '.$id;\n});"
+        },
+        {
+            "type": "subheader",
+            "text": "6. Routes vers controllers"
+        },
+        {
+            "type": "subsubheader",
+            "text": "Pourquoi ?"
+        },
+        {
+            "type": "list",
+            "items": [
+                "Séparer logique métier et routage",
+                "Faciliter maintenance et lecture"
+            ]
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "Route::get('/users', [UserController::class, 'index']);"
+        },
+        {
+            "type": "subheader",
+            "text": "7. Routes ressources (CRUD automatique)"
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "Route::resource('products', ProductController::class);"
+        },
+        {
+            "type": "paragraph",
+            "text": "Génère automatiquement 7 routes : index, create, store, show, edit, update, destroy"
+        },
+        {
+            "type": "subheader",
+            "text": "8. Routes API Resource"
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "Route::apiResource('products', ProductController::class);"
+        },
+        {
+            "type": "list",
+            "items": [
+                "Génère routes pour API (JSON)",
+                "Exclut create/edit qui concernent les vues"
+            ]
+        },
+        {
+            "type": "subheader",
+            "text": "9. Routes nommées"
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');"
+        },
+        {
+            "type": "list",
+            "items": [
+                "Permet de faire des redirections et liens dynamiques",
+                "Ex: <code>route('profile.show')</code>"
+            ]
+        },
+        {
+            "type": "subheader",
+            "text": "10. Groupes de routes"
+        },
+        {
+            "type": "subsubheader",
+            "text": "Middleware"
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "Route::middleware('auth')->group(function () {\n    Route::get('/dashboard', ...);\n});"
+        },
+        {
+            "type": "subsubheader",
+            "text": "Préfixe"
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "Route::prefix('admin')->group(function () {\n    Route::get('/dashboard', ...);\n});"
+        },
+        {
+            "type": "subsubheader",
+            "text": "Nommage"
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "Route::name('admin.')->group(function () {\n    Route::get('/dashboard', ...)->name('dashboard');\n});"
+        },
+        {
+            "type": "separator"
+        }
+    ]
+}

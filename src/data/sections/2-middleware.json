@@ -1,0 +1,148 @@
+{
+    "id": "partie-2",
+    "title": "Partie 2 — Les Middleware",
+    "content": [
+        {
+            "type": "subheader",
+            "text": "1. Définition"
+        },
+        {
+            "type": "paragraph",
+            "text": "Un middleware est une couche intermédiaire qui intercepte la requête avant qu'elle arrive au controller. Il peut :"
+        },
+        {
+            "type": "list",
+            "items": [
+                "Autoriser ou bloquer la requête",
+                "Modifier la requête ou la réponse"
+            ]
+        },
+        {
+            "type": "subheader",
+            "text": "2. Middleware les plus utilisés dans Laravel 12"
+        },
+        {
+            "type": "table",
+            "headers": [
+                "Middleware",
+                "Rôle"
+            ],
+            "rows": [
+                [
+                    "auth",
+                    "Vérifie que l'utilisateur est connecté"
+                ],
+                [
+                    "guest",
+                    "Vérifie que l'utilisateur n'est pas connecté"
+                ],
+                [
+                    "verified",
+                    "Vérifie email confirmé"
+                ],
+                [
+                    "throttle",
+                    "Limite le nombre de requêtes (anti-spam)"
+                ],
+                [
+                    "signed",
+                    "Vérifie URL signée"
+                ],
+                [
+                    "csrf",
+                    "Protection contre attaques CSRF"
+                ]
+            ]
+        },
+        {
+            "type": "subheader",
+            "text": "3. Middleware : Avant & Après"
+        },
+        {
+            "type": "paragraph",
+            "text": "Un middleware peut effectuer des tâches avant ou après que la requête soit traitée par l'application."
+        },
+        {
+            "type": "subsubheader",
+            "text": "Avant (Before Middleware)"
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "public function handle(Request $request, Closure $next): Response\n{\n    // Action avant\n    return $next($request);\n}"
+        },
+        {
+            "type": "subsubheader",
+            "text": "Après (After Middleware)"
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "public function handle(Request $request, Closure $next): Response\n{\n    $response = $next($request);\n    // Action après\n    return $response;\n}"
+        },
+        {
+            "type": "subheader",
+            "text": "4. Middleware personnalisé & Exclusion"
+        },
+        {
+            "type": "subsubheader",
+            "text": "Création"
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "php artisan make:middleware EnsureTokenIsValid"
+        },
+        {
+            "type": "subsubheader",
+            "text": "Exemple"
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "public function handle($request, Closure $next)\n{\n    if (!auth()->user() || !auth()->user()->isAdmin()) {\n        abort(403); // accès interdit\n    }\n    return $next($request);\n}"
+        },
+        {
+            "type": "subsubheader",
+            "text": "Utilisation & Exclusion"
+        },
+        {
+            "type": "paragraph",
+            "text": "Assigner un middleware :"
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "Route::get('/profile', function () {\n    // ...\n})->middleware(EnsureTokenIsValid::class);"
+        },
+        {
+            "type": "paragraph",
+            "text": "Exclure un middleware d'un groupe :"
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "Route::middleware([EnsureTokenIsValid::class])->group(function () {\n    Route::get('/', function () { ... });\n    \n    Route::get('/profile', function () { ... })\n        ->withoutMiddleware([EnsureTokenIsValid::class]);\n});"
+        },
+        {
+            "type": "subheader",
+            "text": "5. Middleware terminable"
+        },
+        {
+            "type": "paragraph",
+            "text": "Certains middleware exécutent du code après la réponse HTTP"
+        },
+        {
+            "type": "paragraph",
+            "text": "Exemple : logging ou nettoyage de sessions"
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "public function terminate($request, $response)\n{\n    // Code exécuté après réponse\n}"
+        },
+        {
+            "type": "separator"
+        }
+    ]
+}

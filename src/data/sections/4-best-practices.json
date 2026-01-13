@@ -1,0 +1,19 @@
+{
+    "id": "partie-4",
+    "title": "Partie 4 — Bonnes pratiques",
+    "content": [
+        {
+            "type": "list",
+            "items": [
+                "Utiliser controllers pour la logique",
+                "Grouper routes similaires",
+                "Middleware léger et spécifique",
+                "Respecter les standards REST",
+                "Mettre en cache les routes en production"
+            ]
+        },
+        {
+            "type": "separator"
+        }
+    ]
+}

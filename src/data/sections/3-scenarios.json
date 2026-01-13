@@ -1,0 +1,36 @@
+{
+    "id": "partie-3",
+    "title": "Partie 3 — Scénarios réels",
+    "content": [
+        {
+            "type": "subsubheader",
+            "text": "Exemple : Dashboard sécurisé"
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "Route::get('/dashboard')->middleware('auth');"
+        },
+        {
+            "type": "subsubheader",
+            "text": "Exemple : Admin"
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "Route::middleware(['auth','checkadmin'])->group(function () {\n    Route::get('/admin/dashboard', ...);\n});"
+        },
+        {
+            "type": "subsubheader",
+            "text": "Exemple : API protégée et limitée"
+        },
+        {
+            "type": "code",
+            "language": "php",
+            "code": "Route::middleware(['auth:sanctum','throttle:60,1'])->group(function () {\n    Route::get('/api/products', ...);\n});"
+        },
+        {
+            "type": "separator"
+        }
+    ]
+}

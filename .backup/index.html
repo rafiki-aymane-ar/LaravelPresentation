@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Présentation : Routage et Middleware dans Laravel 12</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --bg-color: #000000;
+            --text-color: #D1D5DB;
+            /* Light Gray */
+            --heading-color: #FFFFFF;
+            --accent-color: #FF2D20;
+            /* Laravel Red */
+            --secondary-accent: #0EA5E9;
+            /* Keep Blue for specific small details if needed, or just remove */
+            --border-color: rgba(255, 255, 255, 0.1);
+            --code-bg: #111827;
+            --code-border: #374151;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Mukta', sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 72px 24px;
+            /* Reduced side padding slightly for mobile saftey, keeping top/bottom large */
+        }
+
+        /* Typography */
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            color: var(--heading-color);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: 3rem;
+            /* ~48px */
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+            /* ~32px */
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            color: var(--accent-color);
+            /* Highlight headers in Red */
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            /* ~24px */
+            margin-top: 2rem;
+            color: #E5E7EB;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            font-size: 1.35rem;
+            /* ~22px */
+        }
+
+        ul,
+        ol {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+            font-size: 1.35rem;
+            /* Match paragraph size */
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Quotes */
+        blockquote {
+            border-left: 4px solid var(--accent-color);
+            padding-left: 1rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            color: #9CA3AF;
+        }
+
+        /* Code Blocks */
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.1rem;
+            color: #E5E7EB;
+        }
+
+        /* Inline code */
+        p code,
+        li code {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            color: var(--heading-color);
+            font-size: 0.9em;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+            margin-top: 1rem;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 1.25rem;
+        }
+
+        th {
+            color: var(--accent-color);
+            font-weight: 600;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        /* Specific Highlight Classes */
+        .highlight-red {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .method-badge {
+            display: inline-block;
+            color: var(--accent-color);
+            font-weight: bold;
+            min-width: 60px;
+        }
+
+        tr:hover td {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Separators */
+        hr {
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            margin: 3rem 0;
+        }
+
+        /* Layout */
+        .app-layout {
+            display: flex;
+            max-width: 95%;
+            /* Increased from 1400px */
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 300px;
+            padding: 40px 20px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            border-right: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+
+        .sidebar h3 {
+            font-size: 1.2rem;
+            color: var(--heading-color);
+            margin-top: 0;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--accent-color);
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            font-size: 1.1rem;
+        }
+
+        .sidebar li {
+            margin-bottom: 0.8rem;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 8px 12px;
+            color: var(--text-color);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background-color: rgba(255, 45, 32, 0.1);
+            /* Red tint */
+            color: var(--accent-color);
+            text-decoration: none;
+            padding-left: 18px;
+
+        }
+
+        /* Main Content */
+        .main-content {
+            flex-grow: 1;
+            padding: 100px 80px 80px 60px;
+            /* Increased top and right padding */
+            max-width: 1400px;
+        }
+
+        /* Responsive */
+        @media(max-width: 900px) {
+            .app-layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .main-content {
+                padding: 40px 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <h3>Sommaire</h3>
+            <ul>
+                <li><a href="#intro">Introduction</a></li>
+                <li><a href="#partie-1">Partie 1 : Le Routage</a></li>
+                <li><a href="#partie-2">Partie 2 : Middleware</a></li>
+                <li><a href="#partie-3">Partie 3 : Scénarios</a></li>
+                <li><a href="#partie-4">Partie 4 : Bonnes pratiques</a></li>
+                <li><a href="#conclusion">Conclusion</a></li>
+            </ul>
+        </nav>
+
+        <!-- Content -->
+        <main class="main-content" style padding="120px 80px 80px 60px">
+            <h1>Présentation : Routage et Middleware dans Laravel 12</h1>
+
+            <div class="content">
+                <h2 id="intro"><strong>Introduction</strong></h2>
+                <p>Laravel 12 est un framework PHP moderne qui simplifie le développement backend. Deux concepts
+                    essentiels
+                    sont :</p>
+                <ol>
+                    <li><strong>Routage (Routing)</strong> : permet au serveur de savoir quelle action effectuer selon
+                        l'URL
+                        et la méthode HTTP.</li>
+                    <li><strong>Middleware</strong> : permet de contrôler l'accès et de filtrer les requêtes avant
+                        qu'elles
+                        arrivent au controller.</li>
+                </ol>
+
+                <h3>Pourquoi c'est important ?</h3>
+                <ul>
+                    <li>Le routage organise votre application</li>
+                    <li>Les middleware sécurisent et régulent l'accès</li>
+                    <li>Ensemble, ils rendent votre code propre, maintenable et sécurisé</li>
+                </ul>
+
+                <hr>
+
+                <hr>
+
+                <h2 id="partie-1">Partie 1 — Le routage dans Laravel 12</h2>
+
+                <h3>1. Définition</h3>
+                <p>Une route est une règle qui dit à Laravel :</p>
+                <blockquote>
+                    "Si quelqu'un visite cette URL avec cette méthode HTTP, exécute cette action."
+                </blockquote>
+
+                <h4>Exemple simple</h4>
+                <pre><code class="language-php">Route::get('/hello', function () {
+    return 'Bonjour';
+});</code></pre>
+                <ul>
+                    <li><code>/hello</code> → URL</li>
+                    <li><code>get</code> → méthode HTTP</li>
+                    <li><code>function</code> → action à exécuter</li>
+                </ul>
+
+                <h3>2. Où écrire les routes ?</h3>
+                <p>Dans le dossier <code>routes/</code> :</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fichier</th>
+                            <th>Usage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>web.php</td>
+                            <td>Pages Web (HTML)</td>
+                        </tr>
+                        <tr>
+                            <td>api.php</td>
+                            <td>API (JSON)</td>
+                        </tr>
+                        <tr>
+                            <td>console.php</td>
+                            <td>Commandes artisan</td>
+                        </tr>
+                        <tr>
+                            <td>channels.php</td>
+                            <td>Broadcasting / notifications</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>3. Les méthodes HTTP (TOUTES)</h3>
+                <p>Chaque méthode exprime une intention différente :</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Méthode</th>
+                            <th>Action</th>
+                            <th>Exemple</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method-badge">GET</span></td>
+                            <td>Lire / Afficher</td>
+                            <td>Page produits</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method-badge">POST</span></td>
+                            <td>Créer / Envoyer</td>
+                            <td>Formulaire inscription</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method-badge">PUT</span></td>
+                            <td>Modifier complètement</td>
+                            <td>Modifier profil</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method-badge">PATCH</span></td>
+                            <td>Modifier partiellement</td>
+                            <td>Changer mot de passe</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method-badge">DELETE</span></td>
+                            <td>Supprimer</td>
+                            <td>Supprimer compte</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method-badge">OPTIONS</span></td>
+                            <td>Vérifier autorisations</td>
+                            <td>Préflight CORS API</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method-badge">HEAD</span></td>
+                            <td>Vérifier l'existence</td>
+                            <td>Vérifier fichier</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method-badge">ANY</span></td>
+                            <td>Toutes</td>
+                            <td>Webhook universel</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method-badge">MATCH</span></td>
+                            <td>Sélective</td>
+                            <td>GET + POST sur login</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>4. Routes simples</h3>
+                <pre><code class="language-php">Route::get('/home', function () {
+    return view('home');
+});</code></pre>
+                <ul>
+                    <li>Affiche la page <code>/home</code></li>
+                    <li>Utilisée pour des pages simples ou tests</li>
+                </ul>
+
+                <h3>5. Routes dynamiques</h3>
+
+                <h4>Paramètres obligatoires</h4>
+                <pre><code class="language-php">Route::get('/users/{id}', function ($id) {
+    return "Utilisateur $id";
+});</code></pre>
+
+                <h4>Paramètres optionnels</h4>
+                <pre><code class="language-php">Route::get('/users/{name?}', function ($name = null) {
+    return "Utilisateur $name";
+});</code></pre>
+
+                <h4>Contraintes</h4>
+                <pre><code class="language-php">Route::get('/users/{id}', ...)->where('id', '[0-9]+');</code></pre>
+
+                <h4>Paramètres et Injection de Dépendances</h4>
+                <p>Vous pouvez combiner des paramètres de route avec l'injection de dépendances (ex: Request).</p>
+                <pre><code class="language-php">use Illuminate\Http\Request;
+
+Route::get('/user/{id}', function (Request $request, string $id) {
+    return 'User '.$id;
+});</code></pre>
+
+                <h3>6. Routes vers controllers</h3>
+                <h4>Pourquoi ?</h4>
+                <ul>
+                    <li>Séparer logique métier et routage</li>
+                    <li>Faciliter maintenance et lecture</li>
+                </ul>
+                <pre><code class="language-php">Route::get('/users', [UserController::class, 'index']);</code></pre>
+
+                <h3>7. Routes ressources (CRUD automatique)</h3>
+                <pre><code class="language-php">Route::resource('products', ProductController::class);</code></pre>
+                <p>Génère automatiquement 7 routes : index, create, store, show, edit, update, destroy</p>
+
+                <h3>8. Routes API Resource</h3>
+                <pre><code class="language-php">Route::apiResource('products', ProductController::class);</code></pre>
+                <ul>
+                    <li>Génère routes pour API (JSON)</li>
+                    <li>Exclut create/edit qui concernent les vues</li>
+                </ul>
+
+                <h3>9. Routes nommées</h3>
+                <pre><code class="language-php">Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');</code></pre>
+                <ul>
+                    <li>Permet de faire des redirections et liens dynamiques</li>
+                    <li>Ex: <code>route('profile.show')</code></li>
+                </ul>
+
+                <h3>10. Groupes de routes</h3>
+
+                <h4>Middleware</h4>
+                <pre><code class="language-php">Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', ...);
+});</code></pre>
+
+                <h4>Préfixe</h4>
+                <pre><code class="language-php">Route::prefix('admin')->group(function () {
+    Route::get('/dashboard', ...);
+});</code></pre>
+
+                <h4>Nommage</h4>
+                <pre><code class="language-php">Route::name('admin.')->group(function () {
+    Route::get('/dashboard', ...)->name('dashboard');
+});</code></pre>
+
+                <hr>
+
+                <hr>
+
+                <h2 id="partie-2">Partie 2 — Les Middleware</h2>
+
+                <h3>1. Définition</h3>
+                <p>Un middleware est une couche intermédiaire qui intercepte la requête avant qu'elle arrive au
+                    controller.
+                    Il peut :</p>
+                <ul>
+                    <li>Autoriser ou bloquer la requête</li>
+                    <li>Modifier la requête ou la réponse</li>
+                </ul>
+
+                <h3>2. Middleware les plus utilisés dans Laravel 12</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Middleware</th>
+                            <th>Rôle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>auth</td>
+                            <td>Vérifie que l'utilisateur est connecté</td>
+                        </tr>
+                        <tr>
+                            <td>guest</td>
+                            <td>Vérifie que l'utilisateur n'est pas connecté</td>
+                        </tr>
+                        <tr>
+                            <td>verified</td>
+                            <td>Vérifie email confirmé</td>
+                        </tr>
+                        <tr>
+                            <td>throttle</td>
+                            <td>Limite le nombre de requêtes (anti-spam)</td>
+                        </tr>
+                        <tr>
+                            <td>signed</td>
+                            <td>Vérifie URL signée</td>
+                        </tr>
+                        <tr>
+                            <td>csrf</td>
+                            <td>Protection contre attaques CSRF</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>3. Middleware : Avant & Après</h3>
+                <p>Un middleware peut effectuer des tâches avant ou après que la requête soit traitée par l'application.
+                </p>
+
+                <h4>Avant (Before Middleware)</h4>
+                <pre><code class="language-php">public function handle(Request $request, Closure $next): Response
+{
+    // Action avant
+    return $next($request);
+}</code></pre>
+
+                <h4>Après (After Middleware)</h4>
+                <pre><code class="language-php">public function handle(Request $request, Closure $next): Response
+{
+    $response = $next($request);
+    // Action après
+    return $response;
+}</code></pre>
+
+                <h3>4. Middleware personnalisé & Exclusion</h3>
+                <h4>Création</h4>
+                <pre><code class="language-php">php artisan make:middleware EnsureTokenIsValid</code></pre>
+
+                <h4>Exemple</h4>
+                <pre><code class="language-php">public function handle($request, Closure $next)
+{
+    if (!auth()->user() || !auth()->user()->isAdmin()) {
+        abort(403); // accès interdit
+    }
+    return $next($request);
+}</code></pre>
+
+                <h4>Utilisation & Exclusion</h4>
+                <p>Assigner un middleware :</p>
+                <pre><code class="language-php">Route::get('/profile', function () {
+    // ...
+})->middleware(EnsureTokenIsValid::class);</code></pre>
+
+                <p>Exclure un middleware d'un groupe :</p>
+                <pre><code class="language-php">Route::middleware([EnsureTokenIsValid::class])->group(function () {
+    Route::get('/', function () { ... });
+    
+    Route::get('/profile', function () { ... })
+        ->withoutMiddleware([EnsureTokenIsValid::class]);
+});</code></pre>
+
+                <h3>5. Middleware terminable</h3>
+                <p>Certains middleware exécutent du code après la réponse HTTP</p>
+                <p>Exemple : logging ou nettoyage de sessions</p>
+                <pre><code class="language-php">public function terminate($request, $response)
+{
+    // Code exécuté après réponse
+}</code></pre>
+
+                <hr>
+
+                <hr>
+
+                <h2 id="partie-3">Partie 3 — Scénarios réels</h2>
+
+                <h4>Exemple : Dashboard sécurisé</h4>
+                <pre><code class="language-php">Route::get('/dashboard')->middleware('auth');</code></pre>
+
+                <h4>Exemple : Admin</h4>
+                <pre><code class="language-php">Route::middleware(['auth','checkadmin'])->group(function () {
+    Route::get('/admin/dashboard', ...);
+});</code></pre>
+
+                <h4>Exemple : API protégée et limitée</h4>
+                <pre><code class="language-php">Route::middleware(['auth:sanctum','throttle:60,1'])->group(function () {
+    Route::get('/api/products', ...);
+});</code></pre>
+
+                <hr>
+
+                <h2 id="partie-4">Partie 4 — Bonnes pratiques</h2>
+                <ul>
+                    <li>Utiliser controllers pour la logique</li>
+                    <li>Grouper routes similaires</li>
+                    <li>Middleware léger et spécifique</li>
+                    <li>Respecter les standards REST</li>
+                    <li>Mettre en cache les routes en production</li>
+                </ul>
+
+                <hr>
+
+                <h2 id="conclusion">Conclusion</h2>
+                <ul>
+                    <li><strong>Route</strong> = chemin / direction</li>
+                    <li><strong>Middleware</strong> = contrôle / sécurité</li>
+                    <li><strong>Controller</strong> = logique métier</li>
+                </ul>
+                <p>Laravel 12 organise votre application pour qu'elle soit sécurisée, maintenable et claire.</p>
+            </div>
+        </main>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        hljs.highlightAll();
+
+        // Smooth and Slow Scroll Implementation
+        document.querySelectorAll('.sidebar a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+
+                if (targetElement) {
+                    const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY - 40; // Slight offset
+                    const startPosition = window.scrollY;
+                    const distance = targetPosition - startPosition;
+                    const duration = 1500; // 1500ms = 1.5 seconds (Slow and Smooth)
+                    let start = null;
+
+                    function animation(currentTime) {
+                        if (start === null) start = currentTime;
+                        const timeElapsed = currentTime - start;
+                        const run = ease(timeElapsed, startPosition, distance, duration);
+                        window.scrollTo(0, run);
+                        if (timeElapsed < duration) requestAnimationFrame(animation);
+                    }
+
+                    // Easing function (easeInOutQuad) for smooth acceleration and deceleration
+                    function ease(t, b, c, d) {
+                        t /= d / 2;
+                        if (t < 1) return c / 2 * t * t + b;
+                        t--;
+                        return -c / 2 * (t * (t - 2) - 1) + b;
+                    }
+
+                    requestAnimationFrame(animation);
+                }
+            });
+        });
+
+        // Active Menu Highlight on Scroll
+        window.addEventListener('scroll', () => {
+            let current = '';
+            const sections = document.querySelectorAll('#intro, #partie-1, #partie-2, #partie-3, #partie-4, #conclusion');
+            const navLinks = document.querySelectorAll('.sidebar a');
+
+            sections.forEach(section => {
+                const sectionTop = section.getBoundingClientRect().top;
+                // Trigger when section is in the upper third of the viewport
+                if (sectionTop < window.innerHeight / 3) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(a => {
+                a.classList.remove('active');
+                if (current && a.getAttribute('href') === '#' + current) {
+                    a.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
