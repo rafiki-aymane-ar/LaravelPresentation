@@ -16,7 +16,7 @@ class QuizController extends Controller
     /**
      * Display the quiz welcome/login page.
      *
-     * @return \Illuminate\View\View
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function index()
     {
