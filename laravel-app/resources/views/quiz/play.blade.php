@@ -802,19 +802,20 @@
         let mistakes = [];
         const explanations = @json($questions);
         let isQuizActive = true;
+        const quizKey = 'laravel_quiz_result_{{ Auth::id() }}';
 
         document.addEventListener('DOMContentLoaded', () => {
             // Check for explicit new quiz request
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('new')) {
-                localStorage.removeItem('laravel_quiz_result');
+                localStorage.removeItem(quizKey);
             }
 
             // Load Leaderboard IMMEDIATELY (Sidebar)
             loadLeaderboard();
 
             // Check for saved state
-            const savedState = localStorage.getItem('laravel_quiz_result');
+            const savedState = localStorage.getItem(quizKey);
             if (savedState) {
                 isQuizActive = false;
                 const state = JSON.parse(savedState);
@@ -886,7 +887,7 @@
 
         function finishQuiz() {
             isQuizActive = false;
-            localStorage.setItem('laravel_quiz_result', JSON.stringify({ score, mistakes }));
+            localStorage.setItem(quizKey, JSON.stringify({ score, mistakes }));
             saveScore();
             showResult();
 
@@ -982,7 +983,7 @@
         }
 
         function retryQuiz() {
-            localStorage.removeItem('laravel_quiz_result');
+            localStorage.removeItem(quizKey);
             window.location.reload();
         }
     </script>

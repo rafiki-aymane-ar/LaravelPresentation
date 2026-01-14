@@ -19,7 +19,7 @@
             </div>
 
             <div class="welcome-actions">
-                <a href="{{ route('quiz.play') }}" class="btn-start-quiz">
+                <a href="{{ route('quiz.play', Auth::user()->score === null ? ['new' => 1] : []) }}" class="btn-start-quiz">
                     <span class="icon">🚀</span>
                     <span class="text">Commencer le Quiz</span>
                 </a>
