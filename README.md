@@ -147,7 +147,7 @@ Le module de quiz intègre une protection via l'API `Page Visibility` du navigat
 ---
 
 ## 📸 Galerie
-
+![Accueil](screenshots/1.png)
 ![Authentification](screenshots/2.png)
 ![Quiz Interface](screenshots/3.png)
 ![Questionnaire](screenshots/4.png)
