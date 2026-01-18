@@ -2,7 +2,7 @@
 
 Bienvenue dans ce projet de démonstration interactif basé sur **Laravel 12**. Ce projet sert de support visuel et pratique pour comprendre les concepts fondamentaux du Routage et des Middlewares, accompagné d'un quiz interactif gamifié.
 
-![Capture d'écran de l'accueil](screenshots/homepage.png)
+![Capture d'écran de l'accueil](screenshots/1.png)
 
 ## 🌟 Fonctionnalités Principales
 
@@ -144,6 +144,15 @@ laravel-app/
 Le module de quiz intègre une protection via l'API `Page Visibility` du navigateur.
 *   **Event** : `visibilitychange`
 *   **Action** : Si `document.hidden` devient vrai pendant une partie active, le système disqualifie automatiquement le joueur.
+---
+
+## 📸 Galerie
+
+![Authentification](screenshots/2.png)
+![Quiz Interface](screenshots/3.png)
+![Questionnaire](screenshots/4.png)
+![Résultats et Classement](screenshots/5.png)
+
 ---
 
 ## 👥 Auteurs
