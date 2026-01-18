@@ -19,6 +19,6 @@
 
     <div class="sidebar-credits">
         <p>Développé et présenté par :</p>
-        <p><strong>Rafiki Aymane</strong> & <strong>Moukrim Meriem</strong></p>
+        <p><strong>Rafiki Aymane</strong> <br> <strong>Moukrim Meriem</strong></p>
     </div>
 </nav>
