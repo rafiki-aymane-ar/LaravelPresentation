@@ -49,7 +49,7 @@ class AuthController extends Controller
 
             return redirect('/quiz');
         } catch (\Exception $e) {
-            return redirect('/quiz')->with('error', 'Erreur de connexion Google. Veuillez réessayer.');
+            return redirect('/quiz')->with('error', 'Erreur Google: ' . $e->getMessage());
         }
     }
 
