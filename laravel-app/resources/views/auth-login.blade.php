@@ -1,6 +1,20 @@
 @extends('layouts.auth')
 
 @section('content')
+    @if(session('error'))
+        <div class="alert alert-danger"
+            style="background: #fee2e2; color: #991b1b; padding: 1rem; border-radius: 12px; margin-bottom: 1rem; text-align: center; border: 1px solid #fecaca; width: 100%; max-width: 440px;">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    @if(session('success'))
+        <div class="alert alert-success"
+            style="background: #dcfce7; color: #166534; padding: 1rem; border-radius: 12px; margin-bottom: 1rem; text-align: center; border: 1px solid #bbf7d0; width: 100%; max-width: 440px;">
+            {{ session('success') }}
+        </div>
+    @endif
+
     @auth
         <div class="auth-box welcome-card">
             <div class="welcome-header">
@@ -340,8 +354,15 @@
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
         }
 
         .auth-logo img {
@@ -456,7 +477,9 @@
             background: linear-gradient(to var(--direction, right), var(--border-color), transparent);
         }
 
-        .auth-separator::before { --direction: left; }
+        .auth-separator::before {
+            --direction: left;
+        }
 
         .btn-google {
             background: var(--surface-color);
@@ -478,7 +501,8 @@
             height: 18px !important;
             flex-shrink: 0;
         }
-            flex-shrink: 0;
+
+        flex-shrink: 0;
         }
 
         .auth-footer {
